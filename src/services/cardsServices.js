@@ -1,125 +1,66 @@
-// const bd = require('../database/models'); 
-// const {sequelize} = require('../database/models'); 
-// const moment = require('moment');
-// const { Op } = require('sequelize');
+const Card = require('../database/models/card');
+const moment = require('moment');
 
-// const today = moment(); 
+const today = moment(); 
 
-// const services = {
+const services = {
 
-//     getCards: (cardId, reqQuery) => {
+    getCards: (cardId, reqQuery) => {
+        if (reqQuery.purchase) {
+            return Card.aggregate([
+                {
+                    $lookup: {
+                        from: 'purchases',
+                        localField: '_id',
+                        foreignField: 'Card_id',
+                        as: 'purchases'
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        number: { $first: '$number' },
+                        cardHolderNameInCard: { $first: '$cardHolderNameInCard' },
+                        purchaseCount: { $sum: { $size: '$purchases' } }
+                    }
+                },
+                {
+                    $sort: { purchaseCount: -1 }
+                },
+                {
+                    $limit: parseInt(reqQuery.quantity)
+                }
+            ]);
+        }
 
-//         if (reqQuery.purchase){
-//            return sequelize.query(`
-//             SELECT 
-//                 c.id,
-//                 c.number,
-//                 c.cardHolderNameInCard,
-//                 COUNT(p.id) AS purchaseCount
-//             FROM 
-//                 Card c
-//             LEFT JOIN 
-//                 Purchase p ON c.id = p.Card_id
-//             GROUP BY 
-//                 c.id
-//             ORDER BY 
-//                 purchaseCount DESC
-//             LIMIT 
-//                 ${reqQuery.quantity};
-//             `, {
-//             type: sequelize.QueryTypes.SELECT
-//             });
-//         }
-
-//         const nextDays = reqQuery.days? moment().add(reqQuery.days, 'days') : moment().add(90, 'days');
-//         return cardId? bd.Card.findByPk(promotionId) : bd.Card.findAll({where: {expirationDate: { [Op.between]: [today, nextDays]}}});
-//     },
+        const nextDays = reqQuery.days ? moment().add(reqQuery.days, 'days') : moment().add(90, 'days');
+        if (cardId) {
+            return Card.findById(cardId);
+        } else {
+            return Card.find({ expirationDate: { $gte: today, $lte: nextDays } });
+        }
+    },
     
-//     createCard: async (cardData) => {
+    createCard: async (cardData) => {
 
-//         return {code: 200, message: 'card created'};
-//     },
+        return {code: 200, message: 'card created'};
+    },
 
-//     updateCard: async (cardData) => {
-
-//         let updateCard = {};
-
-//         if (!cardData.code){
-//             return {code: 400, message: 'card code missing'};
-//         }
-
-//         if (cardData.cardTitle) {
-//             updateCard.cardTitle = cardData.cardTitle;
-//         }
-
-//         if (cardData.nameStore) {
-//             updateCard.nameStore = cardData.nameStore;
-//         }
-
-//         if (cardData.cuilStore) {
-//             updateCard.cuilStore = cardData.cuilStore;
-//         }
-
-//         if (cardData.validityStartDate) {
-//             updateCard.validityStartDate = cardData.validityStartDate;
-//         }
-
-//         if (cardData.validityEndDate) {
-//             updateCard.validityEndDate = cardData.validityEndDate;
-//         }
-
-//         if (cardData.comments) {
-//             updateCard.comments = cardData.comments;
-//         }
-
-//         if (cardData.Bank_id) {
-//             updateCard.Bank_id = cardData.Bank_id;
-//         }
-
-//         if (cardData.type) {
-//             updateCard.type = cardData.type;
-//         }
-
-//         if (cardData.numberOfQuotas) {
-//             updateCard.numberOfQuotas = cardData.numberOfQuotas;
-//         }
-
-//         if (cardData.interest) {
-//             updateCard.interest = cardData.interest;
-//         }
-
-//         if (cardData.discountPercentage) {
-//             updateCard.discountPercentage = cardData.discountPercentage;
-//         }
-
-//         if (cardData.priceCap) {
-//             updateCard.priceCap = cardData.priceCap;
-//         }
-
-//         if (cardData.onlyCash) {
-//             updateCard.onlyCash = cardData.onlyCash;
-//         }
-
-//         if (cardData.cardEnable) {
-//             updateCard.cardEnable = cardData.cardEnable;
-//         }
-    
-    
-//         await bd.Card.update(updateCard, { where: { code: cardData.code } });
+    updateCard: async (cardData) => {
 
 
-//         return {code: 200, message: 'card updated'};
-//     },
+        return {code: 200, message: 'card updated'};
+    },
 
-//     deleteCard: async (cardData) => {
+    deleteCard: async (cardData) => {
         
-//         await bd.Card.destroy(
-//             {where: { id: cardData.id }}
-//         );
+        await bd.Card.destroy(
+            {where: { id: cardData.id }}
+        );
 
-//         return {code:200, message: 'card deleted'};
-//     }
+        return {code:200, message: 'card deleted'};
+    }
       
-// }
+}
 
-// module.exports = services;
+module.exports = services;

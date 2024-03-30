@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const paymentSummary = require('./paymentSummary');
+const Card = require('./card');
 
 const purchaseSchema = new mongoose.Schema({
   paymentVoucher: { type: String, required: true },
@@ -11,10 +13,10 @@ const purchaseSchema = new mongoose.Schema({
   numberOfQuotas: { type: Number },
   storeDiscount: { type: Number },
   purchaseDate: { type: Date, required: true },
-  paymentSummary_id: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentSummary', required: true }, 
+  paymentSummary_id: { type: mongoose.Schema.Types.ObjectId, ref: 'paymentSummary', required: true }, 
   Promotion_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
   Card_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Card', required: true } 
-}, { timestamps: false });
+}, {collection : 'Purchase', timestamps: false });
 
 const Purchase = mongoose.model('Purchase', purchaseSchema);
 

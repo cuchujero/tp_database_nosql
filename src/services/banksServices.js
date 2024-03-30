@@ -1,16 +1,28 @@
-const Bank = require('../database/models/Bank');
+const Bank = require('../database/models/bank');
 
 const services = {
 
     getBanks: async () => {
-        try {
-            const banks = await Bank.find({});
-            console.log('Number of banks retrieved:', banks.length);
-            return banks;
-        } catch (error) {
-            console.error('Error fetching banks:', error);
-            throw error; // Rethrow the error to propagate it upwards
-        }
+        return Bank.aggregate([
+            {
+                $lookup: {
+                    from: 'bank_customers', 
+                    localField: '_id',
+                    foreignField: 'Bank_id',
+                    as: 'customers'
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    bank_name: { $first: '$name' },
+                    bank_cuit: { $first: '$cuit' },
+                    bank_address: { $first: '$address' },
+                    bank_telephone: { $first: '$telephone' },
+                    number_customers: { $sum: { $size: '$customers' } }
+                }
+            }
+        ]);
     },
     
     createBank: async (bankData) => {

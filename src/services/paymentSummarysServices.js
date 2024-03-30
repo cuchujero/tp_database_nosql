@@ -1,52 +1,65 @@
-// const bd = require('../database/models'); 
-// const { sequelize } = require('../database/models'); 
+const paymentSummary = require('../database/models/paymentSummary');
 
-// const services = {
+const services = {
 
-//     getPaymentSummarys: (paymentSummaryId, reqQuery) => {
+    getPaymentSummarys: (paymentSummaryId, reqQuery) => {
 
-//         if (reqQuery.store){
-//             return sequelize.query(`
-//             SELECT 
-//                 p.store,
-//                 p.cuitStore,
-//                 SUM(ps.totalPrice) AS totalPriceSum
-//             FROM 
-//                 paymentSummary AS ps
-//             INNER JOIN 
-//                 Purchase AS p ON ps.id = p.paymentSummary_id
-//             WHERE 
-//                 ps.month = '${reqQuery.month}'
-//             GROUP BY 
-//                 p.store
-//             ORDER BY 
-//                 totalPriceSum DESC
-//             LIMIT ${reqQuery.quantity};
-//         `, {
-//             type: sequelize.QueryTypes.SELECT
-//             });
-//         }
+        if (reqQuery.store){ return paymentSummary.aggregate([
+                {
+                    $match: { month: reqQuery.month }
+                },
+                {
+                    $lookup: {
+                        from: 'purchases',
+                        localField: '_id',
+                        foreignField: 'paymentSummary_id',
+                        as: 'purchases'
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$store',
+                        cuitStore: { $first: '$cuitStore' },
+                        totalPriceSum: { $sum: '$purchases.totalPrice' }
+                    }
+                },
+                {
+                    $sort: { totalPriceSum: -1 }
+                },
+                {
+                    $limit: parseInt(reqQuery.quantity)
+                }
+            ]);
+        }
 
+        const query = {};
+        if (reqQuery.month) {
+            query.month = reqQuery.month;
+            query.year = '2024';
+        }
 
-//         return reqQuery.month?  bd.paymentSummary.findAll({include:[{association:'purchases'}],where:{month: reqQuery.month, year:2024}}) :
-//         paymentSummaryId? bd.paymentSummary.findByPk(paymentSummaryId) : bd.paymentSummary.findAll();
-//     },
+        if (paymentSummaryId) {
+            query._id = paymentSummaryId;
+        }
+
+        return paymentSummary.find(query).populate('purchases');
+    },
     
-//     createPaymentSummary: async (paymentSummaryData) => {
-//     },
+    createPaymentSummary: async (paymentSummaryData) => {
+    },
 
-//     updatePaymentSummary: async (paymentSummaryData) => {
-//     },
+    updatePaymentSummary: async (paymentSummaryData) => {
+    },
 
-//     deletePaymentSummary: async (paymentSummaryData) => {
+    deletePaymentSummary: async (paymentSummaryData) => {
         
-//         await bd.paymentSummary.destroy(
-//             {where: { id: paymentSummaryData.id }}
-//         );
+        await bd.paymentSummary.destroy(
+            {where: { id: paymentSummaryData.id }}
+        );
 
-//         return {code:200, message: 'paymentSummary deleted'};
-//     }
+        return {code:200, message: 'paymentSummary deleted'};
+    }
       
-// }
+}
 
-// module.exports = services;
+module.exports = services;
