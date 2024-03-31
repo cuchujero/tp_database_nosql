@@ -18,7 +18,7 @@ const promotionSchema = new mongoose.Schema({
   onlyCash: { type: Boolean },
   promotionEnable: { type: Boolean, required: true },
   Bank_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Bank', required: true }, 
-  purchases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Purchase' }] 
+  purchases: [{ type:  mongoose.Schema.Types.ObjectId, ref: "Purchase" }],
 }, {collection : 'Promotion', timestamps: false });
 
 const Promotion = mongoose.model('Promotion', promotionSchema);

@@ -9,7 +9,9 @@ const {
 
 const uri = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DATABASE}?retryWrites=true&w=majority&appName=RolaGoogleCluster0`;
 
-const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true ,  useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false} };
+
+//mongoose.set('debug', true); // Enable Mongoose debugging
 
 async function run() {
   try {

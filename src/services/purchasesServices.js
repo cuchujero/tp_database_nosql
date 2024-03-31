@@ -5,8 +5,9 @@ const services = {
     getPurchases: (purchaseId) => {
             if (purchaseId) {
                 return Purchase.findById(purchaseId)
-                .populate({ path: 'card', options: { strictPopulate: false } })
-                .populate({ path: 'paymentSummary', options: { strictPopulate: false } });
+                .populate('Card_id')
+                .populate('paymentSummary_id')
+                .populate('quotas');
             } else {
                 return Purchase.find().populate({ path: 'purchases', options: { strictPopulate: false } })
             }

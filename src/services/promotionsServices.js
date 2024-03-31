@@ -4,34 +4,36 @@ const services = {
 
     getPromotions: (promotionId, reqQuery) => {
 
+        return Promotion.find().populate('purchases').exec();
+     
+                    
         let query = { promotionEnable: true };
 
-            if (reqQuery.max) {
-                return Promotion.find(query)
-                    .sort({ purchaseCount: -1 })
-                    .limit(parseInt(reqQuery.max))
-                    .populate('purchases');
-            }
-
-            if (reqQuery.nameStore && reqQuery.validityEndDate) {
-                query.nameStore = reqQuery.nameStore;
-                query.validityStartDate = { $gte: reqQuery.validityStartDate };
-                query.validityEndDate = { $lte: reqQuery.validityEndDate };
-
-                return promotionId ? Promotion.findOne(query).populate('purchases') :
-                    Promotion.find(query).populate('purchases');
-            }
-
-            if (reqQuery.nameStore) {
-                query.nameStore = reqQuery.nameStore;
-
-                return promotionId ? Promotion.findOne(query).populate('purchases') :
-                    Promotion.find(query).populate('purchases');
-            }
-
-            return promotionId ? Promotion.findById(promotionId).populate('purchases') :
-                Promotion.find(query).populate('purchases');
+        if (reqQuery.max) {
+            return Promotion.find(query)
+                .sort({ purchaseCount: -1 })
+                .limit(parseInt(reqQuery.max))
+                .populate('purchases'); 
+        }
         
+        if (reqQuery.nameStore && reqQuery.validityEndDate) {
+            query.nameStore = reqQuery.nameStore;
+            query.validityStartDate = { $gte: reqQuery.validityStartDate };
+            query.validityEndDate = { $lte: reqQuery.validityEndDate };
+        
+            return promotionId ? Promotion.findOne(query).populate('purchases') :
+                Promotion.find(query).populate('purchases');
+        }
+        
+        if (reqQuery.nameStore) {
+            query.nameStore = reqQuery.nameStore;
+        
+            return promotionId ? Promotion.findOne(query).populate('purchases') :
+                Promotion.find(query).populate('purchases');
+        }
+        
+        return promotionId ? Promotion.findById(promotionId).populate('purchases') :
+            Promotion.find(query).populate('purchases');
     },
     
     createPromotion: async (promotionData) => {
