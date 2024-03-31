@@ -8,7 +8,7 @@ const customerSchema = new mongoose.Schema({
   telephone: { type: String, required: true },
   entryDate: { type: Date, required: true },
  // purchases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Purchase' }], 
- // banks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bank' }] 
+  banks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bank' }]
 }, {collection : 'Customer', timestamps: false });
 
 const Customer = mongoose.model('Customer', customerSchema);
