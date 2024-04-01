@@ -29,9 +29,9 @@
 
 ### Documentación ### 
 
-**Pruebas API**
+**Tests HTTP**
   
-https://documenter.getpostman.com/view/13819778/2sA35G42Pn
+https://documenter.getpostman.com/view/13819778/2sA35HXLs3
 
 **Diagrama de base de datos relacional**
 
