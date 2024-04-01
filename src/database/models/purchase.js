@@ -16,7 +16,7 @@ const purchaseSchema = new mongoose.Schema({
   storeDiscount: { type: Number },
   purchaseDate: { type: Date, required: true },
   paymentSummary_id: { type: mongoose.Schema.Types.ObjectId, ref: 'paymentSummary', required: true }, 
-  Promotion_id:{type: mongoose.Schema.Types.ObjectId,ref: 'Promotion',required: true},
+  Promotion_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Promotion', required: true},
   Card_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Card', required: true }, 
   quotas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Quota' }] 
 }, {collection : 'Purchase', timestamps: false });

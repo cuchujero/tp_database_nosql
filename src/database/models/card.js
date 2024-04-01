@@ -8,7 +8,7 @@ const cardSchema = new mongoose.Schema({
   expirationDate: { type: Date, required: true },
   Bank_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Bank', required: true }, 
   Customer_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }, 
-//  purchases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Purchase' }] 
+  purchases: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Purchase' }] 
 }, {collection : 'Card', timestamps: false });
 
 const Card = mongoose.model('Card', cardSchema);

@@ -23,10 +23,10 @@
 
 ### Valores de archivo .env ### 
 
-MONGO_USERNAME=dbduser
-MONGO_PASSWORD=XWXZtVxhJ9Bb1V0M
-MONGO_DATABASE=bd_proy
-MONGO_HOST=rolagooglecluster0.yojjtkq.mongodb.net
+- MONGO_USERNAME=dbduser
+- MONGO_PASSWORD=XWXZtVxhJ9Bb1V0M
+- MONGO_DATABASE=bd_proy
+- MONGO_HOST=rolagooglecluster0.yojjtkq.mongodb.net
 
 ---
 

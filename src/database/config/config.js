@@ -27,22 +27,3 @@ async function run() {
 }
 
 run().catch(console.error);
-
-
-
-
-//const mongoose = require('mongoose');
-
-// mongodb+srv://<username>:<password>@rolagooglecluster0.yojjtkq.mongodb.net/?retryWrites=true&w=majority&appName=RolaGoogleCluster0
-
-// const connectionString = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DATABASE}?retryWrites=true&w=majority&appName=RolaGoogleCluster0`;
-
-// mongoose.connect(connectionString)
-//   .then(() => {
-//     console.log('Connected to MongoDB');
-//   })
-//   .catch((error) => {
-//     console.error('Error connecting to MongoDB:', error);
-//   });
-
-// module.exports = mongoose.connection;

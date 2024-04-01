@@ -10,7 +10,7 @@ const services = {
             return Card.aggregate([
                 {
                     $lookup: {
-                        from: 'purchases',
+                        from: 'Purchase',
                         localField: '_id',
                         foreignField: 'Card_id',
                         as: 'purchases'

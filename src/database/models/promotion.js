@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Purchase = require('./purchase');
 const Bank = require('./bank');
 
 const promotionSchema = new mongoose.Schema({

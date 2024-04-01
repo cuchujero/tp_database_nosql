@@ -1,16 +1,65 @@
 const Purchase = require('../database/models/purchase');
+const mongoose = require('mongoose');
 
 const services = {
 
     getPurchases: (purchaseId) => {
-            if (purchaseId) {
-                return Purchase.findById(purchaseId)
-                .populate('Card_id')
-                .populate('paymentSummary_id')
-                .populate('quotas');
-            } else {
-                return Purchase.find().populate({ path: 'purchases', options: { strictPopulate: false } })
+        const { Types: { ObjectId } } = mongoose;
+
+        const pipeline = [
+            {
+                $match: { _id: new ObjectId(purchaseId) } 
+            },
+            {
+                $lookup: {
+                    from: 'Card',
+                    localField: 'Card_id',
+                    foreignField: '_id',
+                    as: 'Card'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'paymentSummary',
+                    localField: 'paymentSummary_id',
+                    foreignField: '_id',
+                    as: 'paymentSummary'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'Promotion',
+                    localField: 'Promotion_id',
+                    foreignField: '_id',
+                    as: 'Promotion'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'Quota',
+                    localField: '_id',
+                    foreignField: 'Purchase_id',
+                    as: 'quotas'
+                }
+            },
+            {
+                $addFields: {
+                    Card: { $arrayElemAt: ["$Card", 0] },
+                    Promotion: { $arrayElemAt: ["$Promotion", 0] },
+                    paymentSummary: { $arrayElemAt: ["$paymentSummary", 0] }
+                }
             }
+        ];
+        
+        if (!purchaseId) {
+            pipeline.unshift({
+                $match: {} 
+            });
+        }
+        
+        const purchase = Purchase.aggregate(pipeline);
+        
+        return purchase;
     },
     
     createPurchase: async (purchaseData) => {

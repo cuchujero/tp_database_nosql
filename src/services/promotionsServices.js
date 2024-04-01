@@ -1,39 +1,50 @@
 const Promotion = require('../database/models/promotion');
+const Purchase = require('../database/models/purchase');
 
 const services = {
 
-    getPromotions: (promotionId, reqQuery) => {
+    getPromotions: async (promotionId, reqQuery) => {
 
-        return Promotion.find().populate('purchases').exec();
-     
-                    
-        let query = { promotionEnable: true };
 
+        const pipeline = [
+            {
+                $match: { promotionEnable: true } 
+            },
+            {
+                $lookup: {
+                    from: 'Purchase',
+                    localField: '_id',
+                    foreignField: 'Promotion_id',
+                    as: 'purchases',
+                },
+            }
+        ];
+    
         if (reqQuery.max) {
-            return Promotion.find(query)
-                .sort({ purchaseCount: -1 })
-                .limit(parseInt(reqQuery.max))
-                .populate('purchases'); 
+            pipeline.push(
+                { $sort: { purchaseCount: -1 } }, 
+                { $limit: parseInt(reqQuery.max) } 
+             );
+        } else if (reqQuery.nameStore && reqQuery.validityEndDate) {
+            pipeline.unshift(
+                { $match: { 
+                    nameStore: reqQuery.nameStore, 
+                    validityStartDate: { $gte: new Date(reqQuery.validityStartDate) },
+                    validityEndDate: { $lte: new Date(reqQuery.validityEndDate) }
+                } } 
+            );
+        } else if (reqQuery.nameStore) {
+            pipeline.unshift(
+                { $match: { nameStore: reqQuery.nameStore } } 
+            );
+        } else if (promotionId) {
+            pipeline.unshift(
+                { $match: { _id: promotionId } } 
+            );
         }
-        
-        if (reqQuery.nameStore && reqQuery.validityEndDate) {
-            query.nameStore = reqQuery.nameStore;
-            query.validityStartDate = { $gte: reqQuery.validityStartDate };
-            query.validityEndDate = { $lte: reqQuery.validityEndDate };
-        
-            return promotionId ? Promotion.findOne(query).populate('purchases') :
-                Promotion.find(query).populate('purchases');
-        }
-        
-        if (reqQuery.nameStore) {
-            query.nameStore = reqQuery.nameStore;
-        
-            return promotionId ? Promotion.findOne(query).populate('purchases') :
-                Promotion.find(query).populate('purchases');
-        }
-        
-        return promotionId ? Promotion.findById(promotionId).populate('purchases') :
-            Promotion.find(query).populate('purchases');
+    
+        const promotion = await Promotion.aggregate(pipeline);
+        return promotion;
     },
     
     createPromotion: async (promotionData) => {
@@ -130,7 +141,7 @@ const services = {
         );
 
         if (updatedPromotion) {
-            return { code: 200, message: 'Promotion updated', updatedPromotion };
+            return { code: 200, message: 'Promotion updated'};
         } else {
             return { code: 404, message: 'Promotion not found' };
         }
@@ -145,7 +156,7 @@ const services = {
         );
 
         if (deletedPromotion) {
-            return { code: 200, message: 'Promotion deleted', deletedPromotion };
+            return { code: 200, message: 'Promotion deleted'};
         } else {
             return { code: 404, message: 'Promotion not found' };
         }

@@ -6,10 +6,10 @@ const services = {
         return Bank.aggregate([
             {
                 $lookup: {
-                    from: 'bank_customers', 
-                    localField: '_id',
-                    foreignField: 'Bank_id',
-                    as: 'customers'
+                    from: 'Customer', 
+                    localField: 'customers', 
+                    foreignField: '_id', 
+                    as: 'bank_customers' 
                 }
             },
             {
@@ -19,7 +19,7 @@ const services = {
                     bank_cuit: { $first: '$cuit' },
                     bank_address: { $first: '$address' },
                     bank_telephone: { $first: '$telephone' },
-                    number_customers: { $sum: { $size: '$customers' } }
+                    number_customers: { $sum: { $size: '$bank_customers' } } 
                 }
             }
         ]);
