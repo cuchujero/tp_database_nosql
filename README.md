@@ -37,8 +37,8 @@ https://documenter.getpostman.com/view/13819778/2sA35HXLs3
 
 ![alt text](https://imgbb.host/images/NQNKQ.png)
 
-**Informe**
+**Informe final**
 
-https://docs.google.com/document/d/1oksijSR4OPd8f_yE_4j6EQ9BbUEMb62pnLhbhnGw-rc/edit?usp=sharing
+[https://docs.google.com/document/d/1oksijSR4OPd8f_yE_4j6EQ9BbUEMb62pnLhbhnGw-rc/edit?usp=sharing](https://drive.google.com/file/d/1dUwahD_bgS3JqOs-q64DaV3egzoiEhi9/view?usp=sharing)
 
 
