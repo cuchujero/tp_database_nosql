@@ -5,7 +5,7 @@
 
 - Julieta Screpnik julietascrepnik@gmail.com
 - Jeronimo Sola cuchujero@hotmail.com
-- Raul Sanchez fueguino84@gmail.com
+- Raúl Sánchez fueguino84@gmail.com
 
 ---  
 
